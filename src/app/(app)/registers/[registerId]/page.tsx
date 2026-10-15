@@ -100,6 +100,7 @@ export default async function RegisterRecordsPage({
 
       <div className="space-y-4 p-4 sm:p-6 lg:p-8">
         <RecordsView
+          key={registerId}
           registerId={registerId}
           fields={fields}
           state={normalizedState}

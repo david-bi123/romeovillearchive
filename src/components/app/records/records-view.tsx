@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LayoutGrid, Table2 } from "lucide-react";
 import type { RecordPage } from "@/server/records";
@@ -43,11 +43,10 @@ export function RecordsView({
   page: RecordPage;
 }) {
   const router = useRouter();
+  // The parent page remounts this component per register (key={registerId}),
+  // so the initializer below loads the correct stored preference every time
+  // without needing a synchronising effect.
   const [view, setView] = useState<RecordsViewMode>(() => readStoredView(registerId));
-
-  useEffect(() => {
-    setView(readStoredView(registerId));
-  }, [registerId]);
 
   const changeView = (next: RecordsViewMode) => {
     setView(next);

@@ -31,10 +31,14 @@ function normalizeEmail(input: unknown): string {
 
 /* ---------------------------------- login --------------------------------- */
 
-const loginSchema = z.object({
+export const loginSchema = z.object({
   email: z.string().trim().min(1, "Enter your email address").max(255),
   password: z.string().min(1, "Enter your password").max(1024),
-  next: z.string().optional(),
+  // FormData.get() returns null (not undefined) for fields the form did not
+  // render — e.g. `next` on a direct visit to /login. `.optional()` rejects
+  // null, which blocked every direct sign-in with
+  // "Expected string, received null". `.nullish()` accepts both.
+  next: z.string().nullish(),
 });
 
 export async function loginAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -368,9 +372,9 @@ async function consumeToken(
   return { ok: true, invitation };
 }
 
-const activationSchema = z.object({
+export const activationSchema = z.object({
   token: z.string().min(10).max(200),
-  fullName: z.string().trim().max(160).optional(),
+  fullName: z.string().trim().max(160).nullish(),
   password: z.string().min(1).max(1024),
   passwordConfirm: z.string().min(1).max(1024),
 });
