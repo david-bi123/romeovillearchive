@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             RV
           </span>
           <span className="text-lg font-semibold tracking-tight text-foreground">
-            RomeoVille Records
+            Romeoville Archive
           </span>
         </Link>
         <div className="rounded-lg border border-border bg-surface shadow-sm">{children}</div>

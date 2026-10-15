@@ -8,6 +8,19 @@ const nextConfig: NextConfig = {
   // Server packages that must not be bundled into the serverless functions.
   serverExternalPackages: ["xlsx", "mysql2", "@node-rs/argon2"],
 
+  // Tailwind CSS v4 runs through its Turbopack loader (see
+  // node_modules/@tailwindcss/turbopack/README.md). Without this rule
+  // `@import "tailwindcss"` is inlined raw and no utilities are generated,
+  // which ships a completely unstyled site.
+  turbopack: {
+    rules: {
+      "*.css": {
+        loaders: ["@tailwindcss/turbopack"],
+        as: "*.css",
+      },
+    },
+  },
+
   // The import wizard uploads spreadsheet payloads in chunks; allow up to 12 MB.
   experimental: {
     serverActions: {

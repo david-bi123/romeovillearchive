@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "RomeoVille Records",
-    template: "%s · RomeoVille Records",
+    default: "Romeoville Archive",
+    template: "%s · Romeoville Archive",
   },
   description:
     "Document and indenture management: structured registers, spreadsheet import and export, role based access and a full audit trail.",

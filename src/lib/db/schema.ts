@@ -16,7 +16,7 @@ import {
 } from "drizzle-orm/mysql-core";
 
 /**
- * RomeoVille Records schema.
+  * Romeoville Archive schema.
  *
  * The application is metadata driven: user defined "registers" hold dynamic
  * field definitions and records whose values are stored in a typed value table.

@@ -1,8 +1,8 @@
 {
-  "name": "romeoville-records",
+  "name": "romeoville-archive",
   "version": "1.0.0",
   "private": true,
-  "description": "RomeoVille Records - Document & Indenture Management System for RomeoVille Properties",
+  "description": "Romeoville Archive - Document & Indenture Management System for RomeoVille Properties",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -11,7 +11,7 @@ import type { Role } from "@/lib/db/schema";
  */
 
 const BRAND = {
-  name: "RomeoVille Records",
+  name: "Romeoville Archive",
   company: "RomeoVille Properties",
   subtitle: "Document & Indenture Management System",
 };
@@ -123,10 +123,10 @@ export function activationEmail(options: {
   const url = absoluteUrl("/activate", { token: options.token });
   const greeting = options.recipientName ? `Hello ${options.recipientName},` : "Hello,";
   const { html, text } = renderLayout({
-    preheader: "Activate your RomeoVille Records administrator account.",
+    preheader: "Activate your Romeoville Archive administrator account.",
     heading: "Activate your administrator account",
     paragraphs: [
-      `${greeting} your RomeoVille Records super administrator account has been prepared for ${BRAND.company}'s Document Department.`,
+      `${greeting} your Romeoville Archive super administrator account has been prepared for ${BRAND.company}'s Document Department.`,
       "Set your password to activate the account and start using the system.",
       `This link can be used once and expires ${options.expiryHours} hours after this email was sent.`,
     ],
@@ -135,7 +135,7 @@ export function activationEmail(options: {
     notice:
       "If you did not expect this email, no action is required — the account stays inactive until the link is used.",
   });
-  return { subject: "Activate your RomeoVille Records account", html, text };
+  return { subject: "Activate your Romeoville Archive account", html, text };
 }
 
 export function invitationEmail(options: {
@@ -151,7 +151,7 @@ export function invitationEmail(options: {
   const greeting = options.inviteeName ? `Hello ${options.inviteeName},` : "Hello,";
   const intro = options.isResend
     ? "Here is your invitation link again:"
-    : `${greeting} ${options.inviterName ?? "An administrator"} invited you to join RomeoVille Records as ${ROLE_LABELS[options.role]}.`;
+    : `${greeting} ${options.inviterName ?? "An administrator"} invited you to join Romeoville Archive as ${ROLE_LABELS[options.role]}.`;
   const paragraphs = [
     intro,
     ...(options.message ? [`Message from ${options.inviterName ?? "your administrator"}: “${options.message}”`] : []),
@@ -159,7 +159,7 @@ export function invitationEmail(options: {
     `It expires ${options.expiryHours} hours after this email was sent. Ask an administrator to resend it if you miss the window.`,
   ];
   const { html, text } = renderLayout({
-    preheader: `You have been invited to RomeoVille Records as ${ROLE_LABELS[options.role]}.`,
+    preheader: `You have been invited to Romeoville Archive as ${ROLE_LABELS[options.role]}.`,
     heading: `You're invited to ${BRAND.name}`,
     paragraphs,
     ctaLabel: "Accept invitation",
@@ -181,7 +181,7 @@ export function passwordResetEmail(options: {
   const url = absoluteUrl("/reset-password", { token: options.token });
   const greeting = options.recipientName ? `Hello ${options.recipientName},` : "Hello,";
   const { html, text } = renderLayout({
-    preheader: "Reset your RomeoVille Records password.",
+    preheader: "Reset your Romeoville Archive password.",
     heading: "Reset your password",
     paragraphs: [
       `${greeting} a password reset was requested for your account.`,
@@ -193,7 +193,7 @@ export function passwordResetEmail(options: {
     notice:
       "If you did not request this, you can safely ignore this email — your current password stays active. As a precaution every existing session of this account will be signed out.",
   });
-  return { subject: "Reset your RomeoVille Records password", html, text };
+  return { subject: "Reset your Romeoville Archive password", html, text };
 }
 
 export function securityNotificationEmail(options: {

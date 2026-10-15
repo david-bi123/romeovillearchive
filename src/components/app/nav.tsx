@@ -85,8 +85,8 @@ export function BrandMark() {
         RV
       </span>
       <span className="flex flex-col leading-tight">
-        <span className="text-sm font-semibold tracking-tight text-foreground">RomeoVille</span>
-        <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Records</span>
+        <span className="text-sm font-semibold tracking-tight text-foreground">Romeoville</span>
+        <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Archive</span>
       </span>
     </Link>
   );

@@ -18,7 +18,7 @@ export function LoginForm({ next }: { next?: string }) {
       <div className="space-y-1.5">
         <h1 className="text-xl font-semibold tracking-tight">Sign in</h1>
         <p className="text-sm text-muted-foreground">
-          Use your RomeoVille Records account. Accounts are invitation only.
+          Use your Romeoville Archive account. Accounts are invitation only.
         </p>
       </div>
 

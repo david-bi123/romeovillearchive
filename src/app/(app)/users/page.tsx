@@ -41,7 +41,7 @@ export default async function UsersPage() {
     <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       <PageHeader
         title="Team & access"
-        description="Who can sign in to RomeoVille Records and what they are allowed to do."
+        description="Who can sign in to Romeoville Archive and what they are allowed to do."
       />
 
       {!superAdminActive ? (

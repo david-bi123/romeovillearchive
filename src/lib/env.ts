@@ -61,7 +61,7 @@ export function getMailjetConfig(): MailjetConfig {
     apiKey: process.env.MAILJET_API_KEY ?? "",
     apiSecret: process.env.MAILJET_API_SECRET ?? "",
     fromEmail: process.env.MAILJET_FROM_EMAIL ?? "",
-    fromName: process.env.MAILJET_FROM_NAME ?? "RomeoVille Records",
+    fromName: process.env.MAILJET_FROM_NAME ?? "Romeoville Archive",
   });
   if (!result.success) {
     throw new Error(
