@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+/*
+ * RomeoVille Records design system
+ * --------------------------------
+ * Deep forest green primary, warm neutral canvas, white surfaces, restrained
+ * borders. Semantic colour names (primary, muted, border, ...) are mapped to
+ * Tailwind v4 theme variables so every utility (`bg-primary`, `border-border`,
+ * `text-muted-foreground`) is generated from this single source of truth.
+ */
+
+:root {
+  --background: #f5f5f2;
+  --surface: #ffffff;
+  --foreground: #171d19;
+  --muted: #f0f1ee;
+  --muted-foreground: #6b756e;
+  --border: #e4e6e1;
+  --input: #d8dbd5;
+  --ring: #0f5132;
+
+  --primary: #0f5132;
+  --primary-foreground: #f4fbf7;
+  --primary-hover: #0b3d25;
+  --primary-soft: #e7f0eb;
+
+  --accent: #166534;
+  --accent-foreground: #f2fbf5;
+
+  --destructive: #b42318;
+  --destructive-foreground: #fef3f2;
+  --destructive-soft: #fef0ee;
+
+  --warning: #b54708;
+  --warning-soft: #fef6e7;
+
+  --info: #175cd3;
+  --info-soft: #eff4ff;
+
+  --success: #067647;
+  --success-soft: #e8f5ee;
+
+  --radius: 0.375rem;
+
+  --sidebar-width: 16rem;
+  --topbar-height: 3.5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-soft: var(--destructive-soft);
+
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  text-rendering: optimizeLegibility;
+}
+
+/* Visible, consistent keyboard focus everywhere. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: calc(var(--radius) + 2px);
+}
+
+::selection {
+  background: #cfe3d6;
+  color: var(--primary);
+}
+
+/* Thin, unobtrusive scrollbars for the spreadsheet-style tables. */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #c9cdc7 transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #c9cdc7;
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Sticky table header + first column (S/N) helpers used by register tables. */
+.table-sticky-header thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.table-sticky-header tbody td.sticky-left,
+.table-sticky-header thead th.sticky-left {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+}
+.table-sticky-header thead th.sticky-left {
+  z-index: 3;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+.animate-skeleton {
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
