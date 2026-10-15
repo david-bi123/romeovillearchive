@@ -14,7 +14,7 @@ export default async function NewRegisterPage() {
     <div>
       <PageHeader
         title="New register"
-        description="Define the columns first — records you add or import afterwards follow this schema."
+        description="Name it, open a fresh sheet, then type your column names and rows straight into the table."
         breadcrumb={
           <Link href="/registers" className="inline-flex items-center gap-1 hover:text-foreground">
             <ChevronLeft className="size-3.5" />
@@ -22,8 +22,18 @@ export default async function NewRegisterPage() {
           </Link>
         }
       />
-      <div className="max-w-3xl p-4 sm:p-6 lg:p-8">
-        <RegisterForm />
+      <div className="max-w-xl p-4 sm:p-6 lg:p-8">
+        <div className="rounded-xl border border-border bg-surface p-4 shadow-card sm:p-5">
+          <RegisterForm />
+        </div>
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          Prefer to start from a file? You can also import an Excel workbook — its
+          columns become the register columns.{" "}
+          <Link href="/imports/new" className="underline hover:text-foreground">
+            Go to imports
+          </Link>
+          .
+        </p>
       </div>
     </div>
   );

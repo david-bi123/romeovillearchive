@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireRegisterAccess } from "@/lib/auth/guard";
+import { z } from "zod";
+import { forbidden, requireRegisterAccess } from "@/lib/auth/guard";
 import {
   archiveRecords,
   bulkSetField,
@@ -16,7 +17,7 @@ import {
   readBulkFieldValue,
   readRecordFormValues,
 } from "@/components/app/records/record-form-data";
-import { toActionState, type ActionState } from "@/server/actions/shared";
+import { bulkSavePayloadSchema, toActionState, type ActionState } from "@/server/actions/shared";
 
 const MAX_BULK_IDS = 500;
 
@@ -204,6 +205,120 @@ export async function bulkSetFieldAction(
     return {
       ok: true,
       message: `Updated "${field.name}" on ${updated} record${updated === 1 ? "" : "s"}.`,
+    };
+  } catch (error) {
+    return toActionState(error);
+  }
+}
+
+/* ------------------------------ bulk save-all ----------------------------- */
+
+/**
+ * Saves a whole spreadsheet-style editing session in one call: updated rows
+ * (with per-row optimistic concurrency), new rows and archived rows.
+ *
+ * Every row is validated and applied individually through the same functions
+ * as single-record writes, so validation, concurrency and auditing behave
+ * identically. Failures are reported per row; successful rows are kept.
+ */
+export async function bulkSaveRecordsAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  try {
+    const registerId = String(formData.get("registerId") ?? "");
+    if (!registerId) return { ok: false, message: "Register not found." };
+
+    let payload: z.infer<typeof bulkSavePayloadSchema>;
+    try {
+      payload = bulkSavePayloadSchema.parse(
+        JSON.parse(String(formData.get("payload") ?? "{}")),
+      );
+    } catch {
+      return { ok: false, message: "The changes could not be read. Reload and try again." };
+    }
+
+    const changeCount = payload.updates.length + payload.creates.length + payload.deletes.length;
+    if (changeCount === 0) return { ok: false, message: "No changes to save." };
+
+    const { session, fields, permissions } = await requireRegisterAccess(registerId);
+    if ((payload.updates.length > 0 || payload.creates.length > 0) && !permissions.edit) {
+      throw forbidden("You do not have permission to edit records in this register.");
+    }
+    if (payload.deletes.length > 0 && !permissions.delete) {
+      throw forbidden("You do not have permission to remove records from this register.");
+    }
+
+    const mentionedIds = [
+      ...payload.updates.map((update) => update.recordId),
+      ...payload.deletes,
+    ];
+    const owned = new Set(await filterRecordIdsForRegister(mentionedIds, registerId));
+
+    const errors: Record<string, string> = {};
+    let saved = 0;
+
+    for (const update of payload.updates) {
+      if (!owned.has(update.recordId)) {
+        errors[`update:${update.recordId}`] = "This record does not belong to this register.";
+        continue;
+      }
+      const result = await updateRecord(
+        update.recordId,
+        fields,
+        update.values,
+        update.dataVersion,
+        session,
+      );
+      if (result.ok) {
+        saved += 1;
+      } else if (result.errors && Object.keys(result.errors).length > 0) {
+        const first = Object.entries(result.errors)[0];
+        const field = fields.find((candidate) => candidate.id === first[0]);
+        errors[`update:${update.recordId}`] =
+          `${field?.name ?? "A column"}: ${first[1]}`;
+      } else {
+        errors[`update:${update.recordId}`] =
+          result.message ?? "This row could not be saved.";
+      }
+    }
+
+    payload.creates.forEach(async () => undefined);
+    for (const [index, create] of payload.creates.entries()) {
+      const result = await createRecord(registerId, fields, create.values, session);
+      if (result.ok) {
+        saved += 1;
+      } else if (result.errors && Object.keys(result.errors).length > 0) {
+        const first = Object.entries(result.errors)[0];
+        const field = fields.find((candidate) => candidate.id === first[0]);
+        errors[`create:${index}`] = `${field?.name ?? "A column"}: ${first[1]}`;
+      } else {
+        errors[`create:${index}`] =
+          result.message ?? "This row could not be added.";
+      }
+    }
+
+    if (payload.deletes.length > 0) {
+      const ownedDeletes = payload.deletes.filter((id) => owned.has(id));
+      for (const id of payload.deletes) {
+        if (!owned.has(id)) errors[`delete:${id}`] = "This record does not belong to this register.";
+      }
+      if (ownedDeletes.length > 0) {
+        const { deleted } = await archiveRecords(ownedDeletes, session);
+        saved += deleted;
+      }
+    }
+
+    revalidateRecordPaths(registerId);
+
+    const failed = Object.keys(errors).length;
+    if (failed === 0) {
+      return { ok: true, message: `All ${saved} change${saved === 1 ? "" : "s"} saved.` };
+    }
+    return {
+      ok: false,
+      message: `Saved ${saved} change${saved === 1 ? "" : "s"}, ${failed} still need${failed === 1 ? "s" : ""} attention.`,
+      errors,
     };
   } catch (error) {
     return toActionState(error);

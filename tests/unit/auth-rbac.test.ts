@@ -35,12 +35,13 @@ describe("capability matrix", () => {
       "records:create",
       "records:edit",
       "records:export",
+      "registers:create",
     ]);
     expect(roleHasCapability("editor", "records:delete")).toBe(false);
     // Import stays grant-governed: editors import only into registers where an
     // administrator granted the import permission — never by default.
     expect(roleHasCapability("editor", "records:import")).toBe(false);
-    expect(roleHasCapability("editor", "registers:create")).toBe(false);
+    expect(roleHasCapability("editor", "registers:delete")).toBe(false);
     expect(roleHasCapability("editor", "users:read")).toBe(false);
   });
 

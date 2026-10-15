@@ -108,3 +108,23 @@ export const securitySettingsSchema = z.object({
   allowAdminInvitations: z.boolean(),
   sessionIdleDays: z.number().int().min(1).max(90),
 });
+
+export const MAX_BULK_SAVE_ROWS = 200;
+export const MAX_BULK_IDS = 500;
+
+const bulkUpdateSchema = z.object({
+  recordId: z.string().min(1).max(64),
+  dataVersion: z.number().int().min(1),
+  values: z.record(z.string(), z.unknown()),
+});
+
+const bulkCreateSchema = z.object({
+  values: z.record(z.string(), z.unknown()),
+});
+
+/** Spreadsheet-style save-all payload: full-row values, versions included. */
+export const bulkSavePayloadSchema = z.object({
+  updates: z.array(bulkUpdateSchema).max(MAX_BULK_SAVE_ROWS).default([]),
+  creates: z.array(bulkCreateSchema).max(MAX_BULK_SAVE_ROWS).default([]),
+  deletes: z.array(z.string().min(1).max(64)).max(MAX_BULK_IDS).default([]),
+});
