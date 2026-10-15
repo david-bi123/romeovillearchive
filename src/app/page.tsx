@@ -15,79 +15,8 @@ import {
   Users,
 } from "lucide-react";
 import { getSession } from "@/lib/auth/session";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LandingNav } from "@/components/app/landing-nav";
-
-/** Static, illustrative preview of the register interface. */
-function ProductPreview() {
-  const columns = ["Client Name", "Indenture No.", "Plot No.", "Date Received", "Status"];
-  const rows: { cells: string[]; status: "success" | "secondary" | "warning"; badge: string }[] = [
-    { cells: ["A. Mensah", "IND-1042", "PL-88", "12 Mar 2025", "Completed"], status: "success", badge: "Completed" },
-    { cells: ["K. Owusu", "IND-1043", "PL-91", "28 Mar 2025", "In progress"], status: "warning", badge: "In progress" },
-    { cells: ["E. Adeyemi", "IND-1044", "PL-102", "04 Apr 2025", "Ready"], status: "secondary", badge: "Ready" },
-  ];
-  return (
-    <figure className="overflow-hidden rounded-xl border border-border bg-surface shadow-raised">
-      <div className="flex items-center gap-1.5 border-b border-border bg-muted/40 px-4 py-2.5" aria-hidden>
-        <span className="size-2.5 rounded-full bg-border" />
-        <span className="size-2.5 rounded-full bg-border" />
-        <span className="size-2.5 rounded-full bg-border" />
-        <span className="ml-3 hidden rounded-md border border-border bg-surface px-3 py-1 text-xs text-muted-foreground sm:block">
-          Indentures in Progress
-        </span>
-      </div>
-      <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2.5" aria-hidden>
-        <span className="rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground">
-          Table
-        </span>
-        <span className="rounded-md px-2.5 py-1 text-xs font-medium text-muted-foreground">
-          Cards
-        </span>
-        <span className="ml-auto hidden rounded-md border border-border px-2.5 py-1 text-xs text-muted-foreground sm:block">
-          Search records…
-        </span>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[36rem] border-collapse text-left text-sm">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                S/N
-              </th>
-              {columns.map((column) => (
-                <th
-                  key={column}
-                  className="whitespace-nowrap px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
-                >
-                  {column}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, index) => (
-              <tr key={row.cells[1]} className="border-b border-border last:border-0">
-                <td className="px-4 py-2.5 tabular-nums text-muted-foreground">#{index + 1}</td>
-                {row.cells.map((cell) => (
-                  <td key={cell} className="whitespace-nowrap px-4 py-2.5 text-foreground">
-                    {cell}
-                  </td>
-                ))}
-                <td className="whitespace-nowrap px-4 py-2.5">
-                  <Badge variant={row.status}>{row.badge}</Badge>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <figcaption className="border-t border-border bg-muted/40 px-4 py-2 text-center text-xs text-muted-foreground">
-        Interface preview — the Documents register with table and card views
-      </figcaption>
-    </figure>
-  );
-}
 
 const CAPABILITIES = [
   "Custom registers with typed columns",
@@ -186,9 +115,6 @@ export default async function Home() {
                   </li>
                 ))}
               </ul>
-            </div>
-            <div className="mx-auto mt-10 max-w-5xl">
-              <ProductPreview />
             </div>
           </div>
         </section>

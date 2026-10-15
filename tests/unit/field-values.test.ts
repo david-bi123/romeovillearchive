@@ -318,21 +318,24 @@ describe("validateRecordValues", () => {
   it("collects slots for valid input in field order", () => {
     const result = validateRecordValues(fields, { [title.id]: "Report", [amount.id]: 250 });
     expect(result.errors).toEqual([]);
-    expect(result.slots).toHaveLength(2);
+    // Every field yields exactly one slot so callers stay aligned — the
+    // omitted optional field falls back to its default value.
+    expect(result.slots).toHaveLength(3);
     expect(result.slots[0].valueText).toBe("Report");
     expect(result.slots[1].valueNumber).toBe(250);
+    expect(result.slots[2].valueText).toBe("n/a");
   });
 
-  it("skips field ids missing from the input entirely", () => {
+  it("flags a missing required field instead of skipping it", () => {
     const result = validateRecordValues(fields, { unknown_field: "ignored" });
-    expect(result.errors).toEqual([]);
-    expect(result.slots).toEqual([]);
+    expect(result.errors).toEqual([{ fieldId: title.id, message: "Title is required" }]);
+    expect(result.slots).toHaveLength(3);
   });
 
   it("reports required fields left empty", () => {
     const result = validateRecordValues(fields, { [title.id]: "", [amount.id]: 1 });
     expect(result.errors).toEqual([{ fieldId: title.id, message: "Title is required" }]);
-    expect(result.slots).toHaveLength(1);
+    expect(result.slots).toHaveLength(3);
   });
 
   it("prefixes coercion failures with the field name", () => {
@@ -345,8 +348,8 @@ describe("validateRecordValues", () => {
   it("falls back to the default value for empty optional fields", () => {
     const result = validateRecordValues(fields, { [title.id]: "Ok", [notes.id]: "" });
     expect(result.errors).toEqual([]);
-    expect(result.slots).toHaveLength(2);
-    expect(result.slots[1].valueText).toBe("n/a");
+    expect(result.slots).toHaveLength(3);
+    expect(result.slots[2].valueText).toBe("n/a");
   });
 
   it("maps errors to a form error record", () => {

@@ -37,6 +37,32 @@ describe("inferColumnType", () => {
     expect(inferColumnType("Name", ["short value", "other value"])).toBe("text");
   });
 
+  it("never mistakes small bare numbers for Excel serial dates", () => {
+    // Regression: every finite number parses as an Excel serial, so the date
+    // branch used to swallow integer columns (storing 1..102 as 1900s dates).
+    expect(inferColumnType("No", [1, 2, 3])).toBe("integer");
+    expect(inferColumnType("No", Array.from({ length: 102 }, (_, i) => i + 1))).toBe("integer");
+    expect(inferColumnType("Year", [2024, 2025])).toBe("integer");
+    expect(inferColumnType("Value", [5, 10, 15])).toBe("integer");
+    expect(inferColumnType("Amount", [12.5, 99.75])).toBe("decimal");
+  });
+
+  it("still recognises real Excel serial dates and date objects", () => {
+    expect(inferColumnType("Date Received", [45755, 45756])).toBe("date");
+    expect(inferColumnType("D", [45755, 45756])).toBe("date");
+    expect(inferColumnType("Signed", [new Date(Date.UTC(2024, 0, 5))])).toBe("date");
+  });
+
+  it("lets an explicit count header win over large serials", () => {
+    expect(inferColumnType("No", [45755, 45756])).toBe("integer");
+  });
+
+  it("warns about small numbers under a date-like name", () => {
+    const profile = profileColumn("Date Received", [1, 2, 3]);
+    expect(profile.suggestedType).toBe("integer");
+    expect(profile.warnings.some((warning) => /counts or dates/i.test(warning))).toBe(true);
+  });
+
   it("uses header hints when the column has no values", () => {
     expect(inferColumnType("Email address", [])).toBe("email");
     expect(inferColumnType("Remarks", [])).toBe("long_text");

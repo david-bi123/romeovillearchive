@@ -37,6 +37,17 @@ const LEADING_ZERO_RE = /^0\d+$/;
 const YES = new Set(["yes", "y", "true", "active"]);
 const NO = new Set(["no", "n", "false", "inactive"]);
 
+/**
+ * Headers that strongly suggest a count/identifier rather than a date.
+ * Used to break the tie when a column holds bare spreadsheet numbers, which
+ * are otherwise ambiguous between counts (1..102) and Excel serial dates.
+ */
+const INTEGER_HEADER_HINT = /\b(no\.?|s\/?n|#|count|qty|quantity|number|serial|year|age|index|rank)\b/i;
+const DATE_HEADER_HINT = /\b(date|day|received|completed|issued|when|timestamp)\b/i;
+
+/** Excel serial for 1982-01-01: below this, bare numbers are counts, not dates. */
+const MODERN_SERIAL_FLOOR = 30000;
+
 const HEADER_TYPE_HINTS: { match: RegExp; type: FieldType }[] = [
   { match: /\b(email|e-mail|mail)\b/i, type: "email" },
   { match: /\b(phone|tel|mobile|contact|whatsapp)\b/i, type: "phone" },
@@ -71,9 +82,22 @@ export function inferColumnType(header: string, values: unknown[]): FieldType {
   );
   if (hasLeadingZero || overlongDigits) return "text";
 
-  // Dates
+  // Dates. Genuine Date objects and date-like strings are unambiguous, but
+  // bare spreadsheet numbers are treacherous: 5 could be a count or the
+  // serial for 1900-01-05, while 45755 is almost certainly a real Excel date.
+  // Small numbers, or numbers under a count-like header, are treated as
+  // numbers so counts are never silently stored as 1900s dates. The wizard
+  // still lets the user override the suggestion either way.
+  const hasDateObjects = nonEmpty.some((value) => value instanceof Date);
+  const allBareNumbers =
+    nonEmpty.length > 0 && nonEmpty.every((value) => typeof value === "number");
+  const maxBareNumber = allBareNumbers ? Math.max(...nonEmpty.map((value) => Number(value))) : NaN;
+  const numbersArePlausibleDates =
+    !allBareNumbers ||
+    hasDateObjects ||
+    (!INTEGER_HEADER_HINT.test(header) && maxBareNumber >= MODERN_SERIAL_FLOOR);
   const dateHits = nonEmpty.filter((value) => parseDateValue(value).date !== null);
-  if (dateHits.length === nonEmpty.length && dateHits.length > 0) {
+  if (numbersArePlausibleDates && dateHits.length === nonEmpty.length && dateHits.length > 0) {
     const allMidnight = nonEmpty.every((value) => {
       const parsed = parseDateValue(value).date;
       if (!parsed || !(value instanceof Date)) return true;
@@ -151,6 +175,16 @@ export function profileColumn(header: string, values: unknown[]): ColumnProfile 
   }
   if (lossyNumbers) {
     warnings.push("Some numbers exceed 15 digits and may lose precision if stored as numbers — kept as text.");
+  }
+  const allBareNumbers = nonEmpty.length > 0 && nonEmpty.every((value) => typeof value === "number");
+  if (
+    allBareNumbers &&
+    Math.max(...nonEmpty.map((value) => Number(value))) < MODERN_SERIAL_FLOOR &&
+    DATE_HEADER_HINT.test(header)
+  ) {
+    warnings.push(
+      "Small numbers under a date-like name — confirm whether this column holds counts or dates before importing.",
+    );
   }
   if (ambiguousDates) {
     warnings.push("Ambiguous day/month order detected — dates are read as day/month/year.");

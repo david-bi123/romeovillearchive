@@ -329,12 +329,16 @@ export function validateRecordValues(
   const errors: { fieldId: string; message: string }[] = [];
 
   for (const field of fields) {
+    // NOTE: every field must push exactly one slot so that callers can align
+    // slots[index] with fields[index]. A missing value is treated as empty
+    // (required and default-value rules still apply) — it is never skipped.
     const raw = input[field.id];
-    if (raw === undefined) continue;
 
     if (isFieldEmpty(field, raw)) {
       if (field.required) {
         errors.push({ fieldId: field.id, message: `${field.name} is required` });
+        // Push a placeholder so slots stay aligned with fields even on error.
+        slots.push(emptySlot());
         continue;
       }
       if (field.defaultValue && field.defaultValue.length > 0) {
@@ -351,10 +355,12 @@ export function validateRecordValues(
     const result = coerceValue(field, raw);
     if (!result.ok) {
       errors.push({ fieldId: field.id, message: `${field.name}: ${result.error}` });
+      slots.push(emptySlot());
       continue;
     }
     if (field.required && isSlotEmpty(result.value)) {
       errors.push({ fieldId: field.id, message: `${field.name} is required` });
+      slots.push(emptySlot());
       continue;
     }
     slots.push(result.value);
