@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { activationSchema, loginSchema } from "@/server/actions/auth";
+import { activationSchema, loginSchema } from "@/server/actions/shared";
 import { safeNextPath } from "@/server/actions/shared";
 
 /**

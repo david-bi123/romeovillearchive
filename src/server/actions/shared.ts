@@ -73,6 +73,23 @@ export function toActionState(error: unknown): ActionState {
 
 const ROLES: [Role, ...Role[]] = ["viewer", "editor", "admin", "super_admin"];
 
+export const loginSchema = z.object({
+  email: z.string().trim().min(1, "Enter your email address").max(255),
+  password: z.string().min(1, "Enter your password").max(1024),
+  // FormData.get() returns null (not undefined) for fields the form did not
+  // render — e.g. `next` on a direct visit to /login. `.optional()` rejects
+  // null, which blocked every direct sign-in with
+  // "Expected string, received null". `.nullish()` accepts both.
+  next: z.string().nullish(),
+});
+
+export const activationSchema = z.object({
+  token: z.string().min(10).max(200),
+  fullName: z.string().trim().max(160).nullish(),
+  password: z.string().min(1).max(1024),
+  passwordConfirm: z.string().min(1).max(1024),
+});
+
 export const inviteSchema = z.object({
   email: z.string().trim().email("Enter a valid email address").max(255),
   role: z.enum(ROLES),
