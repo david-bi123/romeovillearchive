@@ -5,6 +5,7 @@ import { useState } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
+  Check,
   CheckCircle2,
   FileUp,
   Plus,
@@ -351,25 +352,38 @@ export function ImportWizard({
 
   return (
     <div className="space-y-5">
-      <ol className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <ol className="flex flex-wrap items-center gap-1.5 text-xs" aria-label="Import progress">
         {(["upload", "map", "review"] as const).map((key, index) => {
           const order = { upload: 0, map: 1, review: 2 };
           const current = order[step as "upload" | "map" | "review"] ?? 0;
           const state = index < current ? "done" : index === current ? "current" : "todo";
+          const label = key === "upload" ? "Upload" : key === "map" ? "Map columns" : "Review";
           return (
-            <li key={key} className="flex items-center gap-2">
+            <li key={key} className="flex items-center gap-1.5">
               <span
+                aria-current={state === "current" ? "step" : undefined}
                 className={
                   state === "current"
-                    ? "rounded-md bg-primary-soft px-2 py-1 font-medium text-primary"
+                    ? "inline-flex items-center gap-1.5 rounded-full bg-primary px-2.5 py-1 font-semibold text-primary-foreground shadow-card"
                     : state === "done"
-                      ? "rounded-md bg-muted px-2 py-1"
-                      : "rounded-md px-2 py-1"
+                      ? "inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-2.5 py-1 font-medium text-primary"
+                      : "inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-1 font-medium text-muted-foreground"
                 }
               >
-                {index + 1}. {key === "upload" ? "Upload" : key === "map" ? "Map columns" : "Review"}
+                {state === "done" ? (
+                  <Check className="size-3.5" aria-hidden />
+                ) : (
+                  <span className="tabular-nums" aria-hidden>
+                    {index + 1}
+                  </span>
+                )}
+                {label}
               </span>
-              {index < 2 ? <span aria-hidden>→</span> : null}
+              {index < 2 ? (
+                <span aria-hidden className="text-muted-foreground">
+                  →
+                </span>
+              ) : null}
             </li>
           );
         })}

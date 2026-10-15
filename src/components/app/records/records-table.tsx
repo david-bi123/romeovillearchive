@@ -417,6 +417,7 @@ export function RecordsTable({
         type="button"
         className="inline-flex items-center gap-1.5 uppercase tracking-wide hover:text-foreground"
         onClick={() => toggleSort(sortKey)}
+        aria-label={`Sort by ${label}`}
       >
         {label}
         <SortIndicator active={state.sort === sortKey} dir={state.dir} />

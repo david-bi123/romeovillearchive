@@ -21,7 +21,7 @@ export function RegisterTabs({
   return (
     <nav
       aria-label="Register sections"
-      className="flex gap-1 overflow-x-auto border-b border-border px-4 sm:px-6 lg:px-8"
+      className="scrollbar-none flex gap-1 overflow-x-auto border-b border-border bg-surface px-4 sm:px-6 lg:px-8"
     >
       {TABS.map((tab) => {
         const isActive = tab.key === active;

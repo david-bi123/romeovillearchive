@@ -44,6 +44,17 @@
 
   --sidebar-width: 16rem;
   --topbar-height: 3.5rem;
+
+  /* Motion: restrained, consistent, and disabled for reduced-motion users. */
+  --duration-instant: 100ms;
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Elevation: soft, single-hue shadows that sit on the warm canvas. */
+  --shadow-card: 0 1px 2px rgb(23 29 25 / 0.05), 0 1px 3px rgb(23 29 25 / 0.06);
+  --shadow-raised: 0 4px 12px -2px rgb(23 29 25 / 0.1), 0 2px 6px -2px rgb(23 29 25 / 0.06);
+  --shadow-overlay: 0 12px 32px -8px rgb(23 29 25 / 0.18), 0 4px 12px -4px rgb(23 29 25 / 0.1);
 }
 
 @theme inline {
@@ -77,6 +88,12 @@
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-raised: var(--shadow-raised);
+  --shadow-overlay: var(--shadow-overlay);
+
+  --ease-out: var(--ease-out);
 }
 
 * {
@@ -154,4 +171,48 @@ body {
 }
 .animate-skeleton {
   animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+/* Hide scrollbars on horizontal tab strips while keeping scrollability. */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Restrained branded wash for public pages (landing, auth). */
+.branded-backdrop {
+  background-image:
+    radial-gradient(36rem 22rem at 85% -8%, var(--primary-soft) 0%, transparent 60%),
+    radial-gradient(28rem 18rem at 8% 4%, var(--primary-soft) 0%, transparent 55%);
+  background-repeat: no-repeat;
+}
+
+/* Consistent, premium-feeling pressable transition. */
+.pressable {
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform var(--duration-instant) var(--ease-out);
+}
+.pressable:active {
+  transform: translateY(0.5px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .pressable:active {
+    transform: none;
+  }
 }

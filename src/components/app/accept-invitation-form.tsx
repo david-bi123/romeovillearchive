@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/app/password-input";
 import { Field, FormMessage } from "@/components/app/form-primitives";
 import { acceptInvitationAction, type ActionState } from "@/server/actions/auth";
 
@@ -54,11 +55,11 @@ export function AcceptInvitationForm({
         hint="At least 10 characters, with a letter and a number."
         required
       >
-        <Input id="password" name="password" type="password" autoComplete="new-password" required autoFocus />
+        <PasswordInput id="password" name="password" autoComplete="new-password" required autoFocus />
       </Field>
 
       <Field label="Confirm password" name="passwordConfirm" error={state.errors?.passwordConfirm} required>
-        <Input id="passwordConfirm" name="passwordConfirm" type="password" autoComplete="new-password" required />
+        <PasswordInput id="passwordConfirm" name="passwordConfirm" autoComplete="new-password" required />
       </Field>
 
       <Button type="submit" className="w-full" disabled={pending}>

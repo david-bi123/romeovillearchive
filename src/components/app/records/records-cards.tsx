@@ -78,7 +78,7 @@ function RecordCard({
   return (
     <article
       aria-label={titleText}
-      className="flex flex-col rounded-lg border border-border bg-surface p-4 shadow-sm transition-colors hover:border-primary/40"
+      className="flex flex-col rounded-lg border border-border bg-surface p-4 shadow-card transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-raised"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">

@@ -6,7 +6,7 @@ import { useActionState, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/app/password-input";
 import { Field, FormMessage } from "@/components/app/form-primitives";
 import { resetPasswordAction, type ActionState } from "@/server/actions/auth";
 
@@ -57,14 +57,13 @@ export function ResetPasswordForm({ token }: { token: string }) {
         hint="At least 10 characters, with a letter and a number."
         required
       >
-        <Input id="password" name="password" type="password" autoComplete="new-password" required autoFocus />
+        <PasswordInput id="password" name="password" autoComplete="new-password" required autoFocus />
       </Field>
 
       <Field label="Confirm password" name="passwordConfirm" error={mismatch} required>
-        <Input
+        <PasswordInput
           id="passwordConfirm"
           name="passwordConfirm"
-          type="password"
           autoComplete="new-password"
           required
           value={confirm}

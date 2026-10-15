@@ -9,7 +9,7 @@ import { SearchResults } from "@/components/app/search/search-results";
 
 export const metadata: Metadata = { title: "Search" };
 
-const EXAMPLE_QUERIES = ["Invoice", "Acme", "2024"];
+const EXAMPLE_QUERIES = ["Indenture", "Plot", "2024"];
 
 export default async function SearchPage({
   searchParams,

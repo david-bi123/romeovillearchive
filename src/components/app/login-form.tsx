@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/app/password-input";
 import { Field, FormMessage } from "@/components/app/form-primitives";
 import { loginAction, type ActionState } from "@/server/actions/auth";
 
@@ -37,10 +38,9 @@ export function LoginForm({ next }: { next?: string }) {
       </Field>
 
       <Field label="Password" name="password" error={state.errors?.password} required>
-        <Input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           autoComplete="current-password"
           required
         />

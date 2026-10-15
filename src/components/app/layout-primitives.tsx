@@ -21,7 +21,7 @@ export function PageHeader({
             {title}
           </h1>
           {description ? (
-            <p className="mt-1 max-w-3xl text-sm text-muted-foreground">{description}</p>
+            <p className="mt-1 max-w-3xl text-balance text-sm text-muted-foreground">{description}</p>
           ) : null}
         </div>
         {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
@@ -44,7 +44,7 @@ export function PageSection({
   className?: string;
 }) {
   return (
-    <section className={cn("rounded-lg border border-border bg-surface", className)}>
+    <section className={cn("rounded-xl border border-border bg-surface shadow-card", className)}>
       {title || actions ? (
         <div className="flex items-start justify-between gap-4 border-b border-border px-4 py-3 sm:px-5">
           <div>
@@ -81,7 +81,11 @@ export function EmptyState({
         className,
       )}
     >
-      {icon ? <div className="text-muted-foreground/70">{icon}</div> : null}
+      {icon ? (
+        <div className="flex size-11 items-center justify-center rounded-full bg-primary-soft text-primary">
+          {icon}
+        </div>
+      ) : null}
       <div>
         <p className="text-sm font-medium text-foreground">{title}</p>
         {description ? (

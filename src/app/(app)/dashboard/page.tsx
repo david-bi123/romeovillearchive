@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, FileUp, LayoutList, Users } from "lucide-react";
+import { ArrowRight, FileUp, LayoutList, Plus, Search, Users } from "lucide-react";
 import { requireSession } from "@/lib/auth/guard";
+import { roleHasCapability } from "@/lib/auth/rbac";
 import { loadDashboard } from "@/server/dashboard";
 import { PageHeader, PageSection, StatCard } from "@/components/app/layout-primitives";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +32,47 @@ export default async function DashboardPage() {
       />
 
       <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+        <PageSection title="Quick actions" description="Jump straight into today's work.">
+          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+            {roleHasCapability(session.user.role, "registers:create") ? (
+              <Button asChild variant="outline" className="justify-start gap-2">
+                <Link href="/registers/new">
+                  <Plus className="size-4 text-primary" />
+                  New register
+                </Link>
+              </Button>
+            ) : null}
+            {roleHasCapability(session.user.role, "records:import") ? (
+              <Button asChild variant="outline" className="justify-start gap-2">
+                <Link href="/imports/new">
+                  <FileUp className="size-4 text-primary" />
+                  Import Excel file
+                </Link>
+              </Button>
+            ) : null}
+            <Button asChild variant="outline" className="justify-start gap-2">
+              <Link href="/registers">
+                <LayoutList className="size-4 text-primary" />
+                Browse registers
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="justify-start gap-2">
+              <Link href="/search">
+                <Search className="size-4 text-primary" />
+                Search records
+              </Link>
+            </Button>
+            {data.canSeeUsers ? (
+              <Button asChild variant="outline" className="justify-start gap-2">
+                <Link href="/users">
+                  <Users className="size-4 text-primary" />
+                  Manage team
+                </Link>
+              </Button>
+            ) : null}
+          </div>
+        </PageSection>
+
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
             label="Registers"

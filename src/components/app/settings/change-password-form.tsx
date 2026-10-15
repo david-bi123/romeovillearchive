@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/app/password-input";
 import { Field, FormMessage, FormSuccess } from "@/components/app/form-primitives";
 import { PASSWORD_MIN_LENGTH } from "@/lib/auth/password-policy";
 import { changePasswordAction, type ActionState } from "@/server/actions/auth";
@@ -32,10 +32,9 @@ export function ChangePasswordForm() {
       {state.ok ? <FormSuccess message={state.message} /> : null}
 
       <Field label="Current password" name="currentPassword" required>
-        <Input
+        <PasswordInput
           id="currentPassword"
           name="currentPassword"
-          type="password"
           autoComplete="current-password"
           required
         />
@@ -47,10 +46,9 @@ export function ChangePasswordForm() {
         hint={`At least ${PASSWORD_MIN_LENGTH} characters, with a mix of letters and numbers.`}
         required
       >
-        <Input
+        <PasswordInput
           id="newPassword"
           name="newPassword"
-          type="password"
           autoComplete="new-password"
           minLength={PASSWORD_MIN_LENGTH}
           required
@@ -58,10 +56,9 @@ export function ChangePasswordForm() {
       </Field>
 
       <Field label="Confirm new password" name="passwordConfirm" required>
-        <Input
+        <PasswordInput
           id="passwordConfirm"
           name="passwordConfirm"
-          type="password"
           autoComplete="new-password"
           minLength={PASSWORD_MIN_LENGTH}
           required

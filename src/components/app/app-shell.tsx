@@ -49,6 +49,12 @@ export function AppShell({
 
   return (
     <div className="min-h-full bg-background">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:text-primary-foreground"
+      >
+        Skip to content
+      </a>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[var(--sidebar-width)] flex-col border-r border-border bg-surface lg:flex">
         <div className="flex h-[var(--topbar-height)] items-center border-b border-border px-4">
           <BrandMark />
@@ -78,7 +84,7 @@ export function AppShell({
             <div className="flex-1" />
             <UserMenu user={user} />
           </header>
-          <main className="flex-1">{children}</main>
+          <main id="main-content" className="mx-auto w-full max-w-[88rem] flex-1">{children}</main>
         </div>
         <SheetContent side="left" className="w-72 p-0">
           <SheetHeader className="flex h-[var(--topbar-height)] flex-row items-center justify-between border-b border-border px-4">

@@ -56,12 +56,17 @@ export function UserMenu({
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <form action={logoutAction}>
-          <button type="submit" className="flex w-full items-center gap-2 px-2 py-1.5 text-sm text-destructive hover:bg-muted">
-            <LogOut className="size-4" />
-            Sign out
-          </button>
-        </form>
+        <DropdownMenuItem asChild className="p-0">
+          <form action={logoutAction} className="w-full">
+            <button
+              type="submit"
+              className="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-destructive outline-none transition-colors hover:bg-muted focus-visible:bg-muted"
+            >
+              <LogOut className="size-4" />
+              Sign out
+            </button>
+          </form>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
