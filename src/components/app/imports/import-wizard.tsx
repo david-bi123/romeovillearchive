@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -108,6 +108,16 @@ export function ImportWizard({
   const [validation, setValidation] = useState<ValidationSummary | null>(null);
   const [starting, setStarting] = useState(false);
 
+  const topRef = useRef<HTMLDivElement>(null);
+
+  /** Moves to a wizard step and brings it into view (long pages). */
+  const goStep = (next: Step) => {
+    setStep(next);
+    requestAnimationFrame(() => {
+      topRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+  };
+
   const filteredRegisters = importable.filter((register) =>
     pickerSearch.trim()
       ? register.name.toLowerCase().includes(pickerSearch.trim().toLowerCase())
@@ -122,7 +132,7 @@ export function ImportWizard({
     }
     setTarget({ kind: "new_register", registerName: name });
     setActiveFields([]);
-    setStep("upload");
+    goStep("upload");
   };
 
   const onUploadContinue = (input: { sheetName: string; headerRow: number }) => {
@@ -150,7 +160,7 @@ export function ImportWizard({
         notes: entry.notes,
       })),
     );
-    setStep("map");
+    goStep("map");
   };
 
   const saveMapping = async () => {
@@ -202,7 +212,7 @@ export function ImportWizard({
       const result = await saveImportConfigAction(input);
       if (result.ok) {
         setValidation(result.data?.summary ?? null);
-        setStep("review");
+        goStep("review");
         toast.success(result.message ?? "Configuration saved.");
       } else {
         setSaveMessage(result.message);
@@ -260,7 +270,10 @@ export function ImportWizard({
 
   if (step === "pick") {
     return (
-      <div className="space-y-5">
+      <div ref={topRef} className="space-y-5">
+        <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+          Step 1 of 4 — Choose where the data goes
+        </p>
         <div className="rounded-lg border border-border bg-surface p-4 sm:p-5">
           <div className="mb-4">
             <h3 className="text-sm font-semibold">Choose the target register</h3>
@@ -340,8 +353,11 @@ export function ImportWizard({
               <div>
                 <Button onClick={chooseNewRegister}>
                   <Plus className="size-4" />
-                  Continue with a new register
+                  Continue to upload
                 </Button>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Next you will choose the Excel file from your computer.
+                </p>
               </div>
             </div>
           </div>
@@ -353,7 +369,10 @@ export function ImportWizard({
   if (!target) return null;
 
   return (
-    <div className="space-y-5">
+    <div ref={topRef} className="space-y-5">
+      <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+        Step 2 of 4 — Upload the spreadsheet
+      </p>
       <ol className="flex flex-wrap items-center gap-1.5 text-xs" aria-label="Import progress">
         {(["upload", "map", "review"] as const).map((key, index) => {
           const order = { upload: 0, map: 1, review: 2 };
@@ -453,7 +472,7 @@ export function ImportWizard({
             saving={saving}
             saveState={saveMessage ? { ok: false, message: saveMessage } : null}
             onSave={() => void saveMapping()}
-            onBack={() => setStep("upload")}
+            onBack={() => goStep("upload")}
           />
         </div>
       ) : null}
@@ -614,7 +633,7 @@ export function ImportWizard({
             <Button
               type="button"
               variant="ghost"
-              onClick={() => setStep("map")}
+              onClick={() => goStep("map")}
               disabled={starting}
             >
               <ArrowLeft className="size-4" />
