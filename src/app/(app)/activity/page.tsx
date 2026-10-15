@@ -131,13 +131,15 @@ export default async function ActivityPage({
                       </TableCell>
                       <TableCell className="max-w-48">
                         <p className="truncate text-sm font-medium">
-                          {item.actorName ?? item.actorEmail ?? "System"}
+                          {item.actorName ?? "—"}
                         </p>
-                        {item.actorName && item.actorEmail ? (
+                        {item.actorEmail ? (
                           <p className="truncate text-xs text-muted-foreground">
                             {item.actorEmail}
                           </p>
-                        ) : null}
+                        ) : item.actorName ? null : (
+                          <p className="text-xs text-muted-foreground">System</p>
+                        )}
                       </TableCell>
                       <TableCell>
                         <ActionBadge action={item.action} />

@@ -283,7 +283,9 @@ export function ImportWizard({
           {filteredRegisters.length === 0 ? (
             <p className="py-6 text-center text-sm text-muted-foreground">
               {importable.length === 0
-                ? "You do not have access to import into any register yet."
+                ? canCreateRegister
+                  ? "No registers exist yet. Create the first one below to import into it."
+                  : "You do not have access to import into any register yet. Ask an administrator to grant import access."
                 : "No registers match your search."}
             </p>
           ) : (

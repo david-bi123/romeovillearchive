@@ -32,7 +32,9 @@ function buildWhere(query: ActivityQuery): SQL[] {
   if (query.to) clauses.push(lte(auditLogs.createdAt, query.to));
   if (query.search) {
     const term = `%${query.search.replace(/[%_\\]/g, "\\$&")}%`;
-    clauses.push(sql`(${auditLogs.summary} LIKE ${term} OR ${auditLogs.actorEmail} LIKE ${term})`);
+    clauses.push(
+      sql`(${auditLogs.summary} LIKE ${term} OR ${auditLogs.actorEmail} LIKE ${term} OR ${auditLogs.actorUserId} IN (SELECT id FROM users WHERE full_name LIKE ${term} OR email LIKE ${term}))`,
+    );
   }
   return clauses;
 }

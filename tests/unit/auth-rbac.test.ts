@@ -28,15 +28,18 @@ describe("capability matrix", () => {
     expect(roleHasCapability("admin", "records:import")).toBe(true);
   });
 
-  it("limits editors to activity plus record create/edit/view", () => {
+  it("limits editors to activity plus record create/edit/view/export", () => {
     expect(ROLE_CAPABILITIES.editor).toEqual([
       "activity:read",
       "records:view",
       "records:create",
       "records:edit",
+      "records:export",
     ]);
     expect(roleHasCapability("editor", "records:delete")).toBe(false);
-    expect(roleHasCapability("editor", "records:export")).toBe(false);
+    // Import stays grant-governed: editors import only into registers where an
+    // administrator granted the import permission — never by default.
+    expect(roleHasCapability("editor", "records:import")).toBe(false);
     expect(roleHasCapability("editor", "registers:create")).toBe(false);
     expect(roleHasCapability("editor", "users:read")).toBe(false);
   });

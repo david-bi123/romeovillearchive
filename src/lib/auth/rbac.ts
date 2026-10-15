@@ -53,7 +53,7 @@ export const ROLE_CAPABILITIES: Record<Role, Capability[]> = {
     "records:import",
     "records:export",
   ],
-  editor: ["activity:read", "records:view", "records:create", "records:edit"],
+  editor: ["activity:read", "records:view", "records:create", "records:edit", "records:export"],
   viewer: ["records:view"],
 };
 

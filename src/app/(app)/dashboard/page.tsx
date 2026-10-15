@@ -173,8 +173,8 @@ export default async function DashboardPage() {
                   <li key={entry.id} className="flex items-start justify-between gap-4 py-2.5">
                     <span className="min-w-0">
                       <span className="block truncate text-sm">{entry.summary ?? entry.action}</span>
-                      <span className="block text-xs text-muted-foreground">
-                        {entry.actorName ?? entry.actorEmail ?? "System"} · {entry.action}
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {entry.actorName ?? "—"} · {entry.actorEmail ?? "System"} · {entry.action}
                       </span>
                     </span>
                     <span className="shrink-0 text-xs text-muted-foreground">

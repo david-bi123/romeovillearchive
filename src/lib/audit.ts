@@ -1,5 +1,6 @@
+import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { auditLogs } from "@/lib/db/schema";
+import { auditLogs, users } from "@/lib/db/schema";
 import { generateRequestId } from "./auth/tokens";
 
 /**
@@ -51,10 +52,26 @@ export function scrubMetadata(input: unknown, depth = 0): unknown {
  */
 export async function recordAudit(input: AuditInput): Promise<void> {
   try {
+    // Guarantee the actor is identifiable: when only the user id is known
+    // (background jobs, activation, logout), resolve the email so the
+    // activity page never shows a known staff member as "System".
+    let actorEmail = input.actorEmail?.slice(0, 255) ?? null;
+    if (!actorEmail && input.actorUserId) {
+      try {
+        const rows = await db
+          .select({ email: users.email })
+          .from(users)
+          .where(eq(users.id, input.actorUserId))
+          .limit(1);
+        actorEmail = rows[0]?.email ?? null;
+      } catch {
+        actorEmail = null;
+      }
+    }
     await db.insert(auditLogs).values({
       id: crypto.randomUUID(),
       actorUserId: input.actorUserId ?? null,
-      actorEmail: input.actorEmail?.slice(0, 255) ?? null,
+      actorEmail,
       action: input.action.slice(0, 80),
       entityType: input.entityType.slice(0, 60),
       entityId: input.entityId?.slice(0, 64) ?? null,

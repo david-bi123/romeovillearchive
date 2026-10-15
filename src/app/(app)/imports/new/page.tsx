@@ -21,28 +21,11 @@ export default async function NewImportPage({
   const params = await searchParams;
   const registerId = params.registerId?.trim();
 
-  const canImport = roleHasCapability(session.user.role, "records:import");
+  // Creating a *new* register from a spreadsheet needs the global import
+  // capability, but importing into an *existing* register only needs the
+  // per-register import grant — so editors with a grant must reach this page.
+  const canCreateRegister = roleHasCapability(session.user.role, "records:import");
   const limits = getUploadLimits();
-
-  if (!canImport) {
-    return (
-      <div>
-        <PageHeader title="New import" description="Upload a spreadsheet into a register." />
-        <div className="p-4 sm:p-6 lg:p-8">
-          <EmptyState
-            icon={<ShieldAlert className="size-8" />}
-            title="Your role cannot run imports"
-            description="Ask an administrator to grant your account the records:import capability."
-            action={
-              <Button asChild size="sm" variant="outline">
-                <Link href="/imports">Back to imports</Link>
-              </Button>
-            }
-          />
-        </div>
-      </div>
-    );
-  }
 
   if (registerId) {
     const access = await requireRegisterAccess(registerId, "import");
@@ -78,6 +61,26 @@ export default async function NewImportPage({
 
   const importable = await listImportableRegisters(session);
 
+  if (!canCreateRegister && importable.length === 0) {
+    return (
+      <div>
+        <PageHeader title="New import" description="Upload a spreadsheet into a register." />
+        <div className="p-4 sm:p-6 lg:p-8">
+          <EmptyState
+            icon={<ShieldAlert className="size-8" />}
+            title="No import access yet"
+            description="Ask an administrator to grant your account import access on a register. Administrators can do this from the register's Settings & access tab."
+            action={
+              <Button asChild size="sm" variant="outline">
+                <Link href="/imports">Back to imports</Link>
+              </Button>
+            }
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <PageHeader
@@ -99,7 +102,7 @@ export default async function NewImportPage({
             description: register.description,
             recordCount: register.recordCount,
           }))}
-          canCreateRegister
+          canCreateRegister={canCreateRegister}
           limits={{ maxUploadBytes: limits.maxUploadBytes, maxImportRows: limits.maxImportRows }}
         />
       </div>
