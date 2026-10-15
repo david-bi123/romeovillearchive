@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, KeyRound, LogOut } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, KeyRound, Loader2, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -26,6 +27,22 @@ export function UserMenu({
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase())
     .join("");
+
+  const [signingOut, setSigningOut] = useState(false);
+
+  async function handleSignOut(): Promise<void> {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      // Invoked directly (not via a <form> inside the dropdown portal):
+      // Radix unmounts menu content on select, which detaches any form and
+      // makes the browser cancel the submission. A direct action call has no
+      // DOM dependency, and the action itself redirects to /login.
+      await logoutAction();
+    } catch {
+      setSigningOut(false);
+    }
+  }
 
   return (
     <DropdownMenu>
@@ -56,16 +73,16 @@ export function UserMenu({
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild className="p-0">
-          <form action={logoutAction} className="w-full">
-            <button
-              type="submit"
-              className="flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-destructive outline-none transition-colors hover:bg-muted focus-visible:bg-muted"
-            >
-              <LogOut className="size-4" />
-              Sign out
-            </button>
-          </form>
+        <DropdownMenuItem
+          onSelect={(event) => {
+            event.preventDefault();
+            void handleSignOut();
+          }}
+          disabled={signingOut}
+          className="text-destructive focus:text-destructive"
+        >
+          {signingOut ? <Loader2 className="size-4 animate-spin" /> : <LogOut className="size-4" />}
+          {signingOut ? "Signing out…" : "Sign out"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
